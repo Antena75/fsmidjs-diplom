@@ -1,0 +1,52 @@
+services:
+
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+      - 27017:27017     
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example 
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: example
+      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
+      ME_CONFIG_BASICAUTH: false
+
+
+  backend:
+    image: node:22.20
+    working_dir: /app
+    volumes:
+      - ./backend:/app
+    environment:
+      - HTTP_PORT=3000
+      - MONGODB_URL=mongodb://root:example@mongo:27017/
+      - JWT_SECRET=SECRET
+    ports:
+      - 3000:3000
+    command: npm run start:dev
+    depends_on:
+      - mongo
+
+  frontend:
+    image: node:22.20
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+    environment: 
+      - VITE_MAIN_URL=http://localhost:3000/api
+      - VITE_SERVER_URL=http://localhost:3000
+    ports:
+      - 5173:5173
+    command: npm run dev
+    depends_on:
+      - backend
+

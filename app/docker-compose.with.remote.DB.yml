@@ -1,0 +1,37 @@
+services:
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: ./Dockerfile.back
+    ports: 
+      - 3000:3000
+    volumes:
+      - ./backend:/app
+    environment: 
+      - HTTP_PORT=3000
+      - MONGODB_URL=mongodb+srv://akorotaev75_db_user:U0zT1Iv34XWpS4C9@cluster0.odyhvee.mongodb.net/?retryWrites=true&w=majority
+      - JWT_SECRET=SECRET
+    networks:
+      - app-network
+
+  frontend:
+    build: 
+      context: ./frontend
+      dockerfile: ./Dockerfile.front
+    ports: 
+      - 5173:5173
+    volumes:
+      - ./frontend:/app
+    tty: true
+    environment: 
+      - VITE_MAIN_URL=http://localhost:3000/api
+      - VITE_SERVER_URL=http://localhost:3000
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
