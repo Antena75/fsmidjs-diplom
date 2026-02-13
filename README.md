@@ -1,3 +1,17 @@
+Запуск приложения:
+
+1. Запуск MongoDB и MongoDB-Express в Docker в папке 'app/backend': ' docker compose up '
+2. Запуск backend в папке 'app/backend': ' npm run start:dev '
+3. Запуск frontend в папке 'app/frontend': ' npm run dev ' и перейти по адресу http://localhost:5173/
+4. Docker-контейнер собирается в папке 'app': ' docker compose -f docker-compose.dev.yml up ' или ' docker compose up '
+5. Примечание:
+- Фото библиотек и книг загружаются из backend в папку 'frontend/public/libraries', потом frontend их забирает (в docker отсутствует мост между backend и frontend для обмена фото);
+- Поиск пользователя, библиотеки или книги проводится по частичному совпадению;
+- Только admin может создавать библиотеки, книги и пользователей; чат ведется между client и manager; client может арендовать и посмотреть только свои брони, отменить аренду может только manager;
+- Невозможно арендовать книгу при пересечении дат;
+- Чат поддержки начинает работать по полной (отправляет собеседнику само сообщение в чат и извещение о 'новом сообщении'), после того как чат откроет manager;
+- При запуске Docker контейнера у меня выдает ошибку во frontend. Ошибка уходит при запуске в терминале следующей строчки: ' docker compose -f docker-compose.dev.yml run --rm frontend sh -c "npm config set registry https://registry.npmmirror.com && npm install @rollup/rollup-linux-x64-gnu --save-dev --verbose" '
+
 # Дипломный проект на курсе Fullstack-разработчик на JavaScript»
 
 ## Cайт-агрегатор поиска и бронирования книг в библиотеках
