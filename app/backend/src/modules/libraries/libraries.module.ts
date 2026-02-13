@@ -1,13 +1,11 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
 import { LibrariesController } from './libraries.controller';
 import { LibrariesService } from './libraries.service';
-import { Libraries, LibrariesSchema } from './libraries.schema';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Library } from './library.entity';
 
 @Module({
-  imports: [
-    MongooseModule.forFeature([{ name: Libraries.name, schema: LibrariesSchema }]),
-  ],
+  imports: [ TypeOrmModule.forFeature([Library]) ],
   controllers: [LibrariesController],
   providers: [LibrariesService],
   exports: [LibrariesService],

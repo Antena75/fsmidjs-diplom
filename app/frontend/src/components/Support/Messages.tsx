@@ -21,7 +21,7 @@ function Messages(data: data) {
       >
         {messages.length > 0 ? (
           messages.map(elem =>
-            <Message key={elem._id} message={elem} />
+            <Message key={elem.id} message={elem} />
           )
         ) : (
           <p className="text-muted text-center">Сообщения в этом чате отсутствуют!</p>

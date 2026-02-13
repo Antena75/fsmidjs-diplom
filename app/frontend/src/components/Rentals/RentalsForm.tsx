@@ -27,14 +27,14 @@ function RentalsForm() {
 
       const data = {
         userId,
-        libraryId: currentLibrary._id,
-        bookId: currentBook._id,
+        libraryId: currentLibrary.id,
+        bookId: currentBook.id,
         dateStart,
         dateEnd,
       };
 
       rentalsAPI.addRental(data)
-        .then(() => {          
+        .then(() => {   
           iziToast.success({ message: `Вы успешно арендовали книгу "${currentBook.title}" в библиотеке "${currentLibrary.name}"`, position: 'bottomCenter' });
           navigate(`/rentals?id=${userId}`)
         })

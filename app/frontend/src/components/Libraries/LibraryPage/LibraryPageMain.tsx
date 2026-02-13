@@ -53,7 +53,7 @@ function LibraryPageMain() {
             </Link>
           }
           {role === 'admin' &&
-            <Link to={`/add-book?${librariesState.currentLibrary._id}`}>
+            <Link to={`/add-book?${librariesState.currentLibrary.id}`}>
               <Button variant="success" className="me-1 mb-2">Добавить книгу</Button>
             </Link>
           }

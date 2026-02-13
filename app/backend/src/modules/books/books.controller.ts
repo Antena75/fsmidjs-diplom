@@ -7,7 +7,8 @@ import { CreateBookDto } from './interfaces/create.book';
 import { SearchBookParamsDto } from './interfaces/search.book';
 import { UpdateBookDto } from './interfaces/update.book';
 import { BooksService } from './books.service';
-import { BooksDocument } from './books.schema';
+import { UpdateResult } from 'typeorm';
+import { BookEntity } from './book.entity';
 
 @Controller('api/books')
 export class BooksController {
@@ -20,7 +21,7 @@ export class BooksController {
   createBook(
     @Body() dataBook: CreateBookDto,
     @UploadedFiles() images: Array<Express.Multer.File>,
-  ): Promise<BooksDocument> {
+  ):  Promise<BookEntity>  {
     const data = { ...dataBook };
     if (images?.length) { data.images = images.map((img) => img.filename); }
     return this.booksService.create(data);
@@ -34,14 +35,14 @@ export class BooksController {
     @Param('id') bookId: ID,
     @Body() dataBook: UpdateBookDto,
     @UploadedFiles() images: Array<Express.Multer.File>,
-  ): Promise<BooksDocument> {
+  ): Promise<UpdateResult> {
     return this.booksService.update( bookId, dataBook, images.map((img) => img.filename) );
   }
 
   @Get()
   searchBooks(
     @Query() params: SearchBookParamsDto,
-  ): Promise<BooksDocument[]> {
+  ): Promise<BookEntity[]> {
     return this.booksService.search(params);
   }
 }

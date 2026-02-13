@@ -7,4 +7,3 @@ export interface RentalDto {
   dateStart: Date;
   dateEnd: Date;
 }
-

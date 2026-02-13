@@ -64,7 +64,7 @@ function LibrariesAddForm() {
 
       librariesAPI.addLibrary(formData)
         .then(result => {
-          iziToast.success({ message: `Библиотека ${result.data.title} успешно добавлена`, position: 'bottomCenter' });
+          iziToast.success({ message: `Библиотека ${result.data.name} успешно добавлена`, position: 'bottomCenter' });
           navigate('/all-libraries');
         })
         .catch(err => {

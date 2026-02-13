@@ -6,15 +6,15 @@ import { ClientAnswerDto } from './interfaces/client.answer';
 import { GetChatListParams } from './interfaces/get.params';
 import { MarkMessagesAsReadDto } from './interfaces/mark.message';
 import { SendMessageDto } from './interfaces/send.message';
-import { MessageDocument } from './schemas/message.schema';
-import { ChatDocument } from './schemas/chat.schema';
 import { SupportClientService } from './services/support.client.service';
 import { SupportEmployeeService } from './services/support.employee.service';
 import { SupportService } from './services/support.service';
+import { MessageEntity } from './entity/message.entity';
+import { ChatEntity } from './entity/chat.entity';
 
 @UseGuards(JwtGuard, RolesGuard)
 @Controller('api/support')
-export class SupportController {
+export class SupportController { 
   constructor(
     private supportService: SupportService,
     private supportClientService: SupportClientService,
@@ -32,7 +32,7 @@ export class SupportController {
       text: dataReq.text,
     });
     const count = await this.supportClientService.getUnreadCount(
-      newRequest.id,
+      newRequest.id
     );
     return {
       id: newRequest.id,
@@ -43,13 +43,13 @@ export class SupportController {
   }
 
   @Get()
-  async findChats(@Query() params: GetChatListParams): Promise<ChatDocument[]> {
+  async findChats(@Query() params: GetChatListParams): Promise<ChatEntity[]> {
     return await this.supportService.findChats(params);
   }
 
   @Post('/sendmessage')
   @SetMetadata('roles', ['client', 'manager']) 
-  async sendMessage(@Body() dataSend: SendMessageDto): Promise<MessageDocument> {
+  async sendMessage(@Body() dataSend: SendMessageDto): Promise<MessageEntity> {
     return await this.supportService.sendMessage(dataSend);
   }
 
@@ -58,7 +58,7 @@ export class SupportController {
   async getMessages(
     @Param('id') chatId: ID,
     @Query() data: { userId: ID },
-  ): Promise<MessageDocument[]> {
+  ): Promise<MessageEntity[]> {
     return await this.supportService.getMessages(chatId, data.userId);
   }
 
@@ -68,11 +68,7 @@ export class SupportController {
     @Body() dataMark: MarkMessagesAsReadDto,
     @Request() request: any,
   ): Promise<void>  {
-    if (request.user?.role === 'client') {
-    //   await this.supportClientService.markMessagesAsRead(dataMark); // на всякий случай
-    // } else {
-      await this.supportEmployeeService.markMessagesAsRead(dataMark);
-    }
+      await this.supportService.markMessagesAsRead(dataMark);
   }
 
   @Post('/closerequest/:id')

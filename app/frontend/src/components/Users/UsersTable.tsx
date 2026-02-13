@@ -39,14 +39,14 @@ function UsersTable(data: data) {
         </thead>
         <tbody>
           {list.map(elem =>
-            <tr key={elem._id}>
+            <tr key={elem.id}>
               <td>{elem.name}</td>
               <td>{elem.contactPhone}</td>
               <td>{elem.email}</td>
               <td>{elem.role}</td>
               <td>
                 {elem.role === 'client' &&
-                  <Link to={`/rentals?id=${elem._id}`} className="text-decoration-none">
+                  <Link to={`/rentals?id=${elem.id}`} className="text-decoration-none">
                     <Button variant="warning" className="mb-1">Книги в аренде</Button>
                   </Link>
                 }

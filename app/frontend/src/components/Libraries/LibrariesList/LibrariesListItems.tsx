@@ -34,7 +34,7 @@ function LibrariesListItems(data: LibrariesList) {
       ) : (
         <>
           {list.map(elem =>
-            <LibrariesListItem key={elem._id} library={elem} showBtn={true} />
+            <LibrariesListItem key={elem.id} library={elem} showBtn={true} />
           )}
           <Pagination className="mt-3">
             {librariesState.offset > 0 && 

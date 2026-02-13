@@ -1,41 +1,37 @@
-import {
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { ID } from '../type.id';
 import { CreateBookDto } from './interfaces/create.book';
 import { SearchBookParamsDto } from './interfaces/search.book';
 import { UpdateBookDto } from './interfaces/update.book';
-import { Books, BooksDocument } from './books.schema';
 import { LibrariesService } from '../libraries/libraries.service';
+import { Book, BookEntity } from './book.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, Like, UpdateResult } from 'typeorm';
+
 
 @Injectable()
 export class BooksService {
   constructor(
-    @InjectModel(Books.name) 
-    private booksModel: Model<Books>,
     private librariesService: LibrariesService,
-  ) {}
-
-  async create(dataBook: CreateBookDto): Promise<BooksDocument> {
+    @InjectRepository(Book) private readonly bookRepo: Repository<Book>) {}
+    
+  async create(dataBook: CreateBookDto): Promise<BookEntity> {
     const library = await this.librariesService.findById(dataBook.library);
     if (!library) {
       throw new NotFoundException('Библиотека не найдена!');
     }
     try {
-      const createdBook = new this.booksModel({
+      const book = await this.bookRepo.save({
         library: dataBook.library,
         title: dataBook.title,
         author: dataBook.author,
-        year: dataBook.year,
+        year: Number(dataBook.year),
         description: dataBook.description,
         images: dataBook.images,
-        totalCopies: dataBook.totalCopies || '1',
-        availableCopies: dataBook.availableCopies || '1',
+        totalCopies: Number(dataBook.totalCopies) || 1,
+        availableCopies: Number(dataBook.availableCopies) || 1,
     });
-      return createdBook.save();
+      return new BookEntity(book); 
     } catch (e) {
       console.error(e);
     }
@@ -45,30 +41,34 @@ export class BooksService {
     bookId: ID,
     dataBook: UpdateBookDto,
     images: string[],
-  ): Promise<BooksDocument> {
+  ): Promise<UpdateResult> {
     const book = await this.findById(bookId); // Проверка наличия
-    return await this.booksModel.findByIdAndUpdate(
-      { _id: bookId },
-      { $set: { ...dataBook, images} },
-      { new: true },
+    return await this.bookRepo.update(
+      { id: bookId },
+      { ...dataBook, images },
     );
   }
 
-  async findById(bookId: ID): Promise<BooksDocument> {
-    const book = await this.booksModel.findById(bookId);
+  async findById(bookId: ID): Promise<BookEntity>  {
+    const book = await this.bookRepo.findOne({
+      where: { id: bookId },
+    });
     if (!book) {
       throw new NotFoundException('Книга не найдена!');
     }
     return book;
   }
 
-  async search(params: SearchBookParamsDto): Promise<BooksDocument[]> {
+  async search(params: SearchBookParamsDto): Promise<BookEntity[]>  {
     const { limit, offset, library, title, author } = params;
-    const query = {
-      library,
-      title: { $regex: new RegExp(title, 'i') },
-      author: { $regex: new RegExp(author, 'i') },
-    };
-    return await this.booksModel.find(query).limit(limit || 0).skip(offset || 0);
+    return await this.bookRepo.find({      
+      where: { 
+        library,
+        title: Like (`%${title}%`),
+        author: Like (`%${author}%`)
+      },
+      skip: offset,
+      take: limit
+    });
   }
 }

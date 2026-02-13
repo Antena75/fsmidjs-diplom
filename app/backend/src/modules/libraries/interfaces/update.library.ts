@@ -1,18 +1,21 @@
-import { IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
 
 export class UpdateLibraryDto {
-  @IsOptional()
+  @IsNotEmpty({message: 'Название библиотеки - обязательное поле'})
+  @MinLength(5, { message: 'Название библиотеки - не менее 5 символов!' })
+  @MaxLength(50, {message: 'Название библиотеки - не более 50 символов!'})
   @IsString()
-  readonly name?: string;
+  readonly name: string;
+
+  @IsNotEmpty({message: 'Адрес библиотеки - обязательное поле'})
+  @IsString()
+  readonly address: string;
 
   @IsOptional()
-  @IsString()
-  readonly address?: string;
-
-  @IsOptional()
+  @MaxLength(200, {message: 'Описание библиотеки - не более 200 символов!'})
   @IsString()
   readonly description?: string;
 
-  @IsOptional()
-  readonly images?: Express.Multer.File[] | string[];
+  @IsOptional() 
+  readonly images?: string[];
 }

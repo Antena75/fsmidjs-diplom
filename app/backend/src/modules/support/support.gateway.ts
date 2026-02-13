@@ -24,11 +24,11 @@ export class SupportGateway {
     @ConnectedSocket() client: Socket,
   ) {
     return this.supportService.subscribe(async (chat, message) => { //передача функции слушателя события
-      if (chat._id.toString() === payload.chatId) {
-        const { _id, readAt, text, authorId } = message;
-        const { _id: userId, name } = await this.usersService.findById(authorId);
+      if (chat.id.toString() === payload.chatId) {
+        const { id, readAt, text, authorId } = message;
+        const { id: userId, name } = await this.usersService.findById(authorId);
         const response = {
-          _id,
+          id,
           sentAt: message['sentAt'],
           text,
           readAt,

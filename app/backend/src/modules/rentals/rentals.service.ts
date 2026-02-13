@@ -1,24 +1,23 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
 import { ID } from '../type.id';
 import { BooksService } from '../books/books.service';
 import { LibrariesService } from '../libraries/libraries.service';
 import { UsersService } from '../users/users.service';
-import { RentalDto } from './interfaces/rental';
-import { Rentals, RentalsDocument } from './rentals.schema';
+import { RentalDto } from './interfaces/Rental';
+import { Rental, RentalEntity } from './rental.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, DeleteResult, MoreThan, LessThan } from 'typeorm';
 
 @Injectable()
 export class RentalsService {
   constructor(
-    @InjectModel(Rentals.name)
-    private rentalsModel: Model<Rentals>,
+    @InjectRepository(Rental) private readonly rentalRepo: Repository<Rental>,
     private usersService: UsersService,
     private librariesService: LibrariesService,
     private booksService: BooksService,
   ) {}
-
-  async createRental(dataRental: RentalDto): Promise<RentalsDocument> {
+ 
+  async createRental(dataRental: RentalDto): Promise<RentalEntity> {
     const user = await this.usersService.findById(dataRental.userId);
     if (!user) {
       throw new NotFoundException('Пользователь не найден!');
@@ -31,19 +30,21 @@ export class RentalsService {
     if (!book) {
       throw new NotFoundException('Книга не найдена!');
     }
-    const count = await this.rentalsModel.countDocuments({
-      bookId: dataRental.bookId,
-      libraryId: dataRental.libraryId,
-      dateStart: { $lt: new Date(dataRental.dateEnd).toISOString() },
-      dateEnd: { $gt: new Date(dataRental.dateStart).toISOString() },
+    const count = await this.rentalRepo.find({
+      where: {
+        bookId: dataRental.bookId,
+        libraryId: dataRental.libraryId,
+        dateStart: LessThan (new Date(dataRental.dateEnd)),
+        dateEnd: MoreThan (new Date(dataRental.dateStart)),
+      }
     });
 
-    if (count !== 0) {
+    if (count.length !== 0) {
       throw new BadRequestException('Книга не доступна (арендована)');
     }
     try {
-      const rental = new this.rentalsModel(dataRental);
-      return rental.save();
+      const rental = await this.rentalRepo.save(dataRental);
+      return new RentalEntity(rental); 
     } catch (e) {
       console.error(e);
     }
@@ -51,13 +52,13 @@ export class RentalsService {
 
   async removeRental(
     rentalId: ID,
-  ): Promise<RentalsDocument> {
-    const rental = await this.rentalsModel.findById(rentalId);
+  ): Promise<DeleteResult> {  
+    const rental = await this.rentalRepo.findOne({ where: { id: rentalId } });
     if (!rental) {
       throw new NotFoundException('Аренда не найдена!');
     }
     try {
-      return this.rentalsModel.findByIdAndDelete(rentalId);
+      return await this.rentalRepo.delete(rentalId);
     } catch (error) {
       console.error(error);
     }
@@ -65,16 +66,21 @@ export class RentalsService {
   
   async searchRentals(
     searchParams: Partial<RentalDto>,
-  ): Promise<RentalsDocument[]> {
+  ): Promise<RentalEntity[]> {
     const { userId } = searchParams;
-    const user = await this.usersService.findById(userId);
+    const user = await this.usersService.findById( userId );
     if (!user) {
       throw new NotFoundException('Пользователь не найден!');
     }
-
-    return await this.rentalsModel.find({ userId })
-      .populate('userId', ['email'])
-      .populate('libraryId', ['name'])
-      .populate('bookId', ['title'])
+    const rentals = await this.rentalRepo.find({ where: { userId } })
+    const result = [];
+    const promises = rentals.map(async (rental) => {
+    const rent = new RentalEntity(rental)
+    rent.libraryName = (await this.librariesService.findById(rental.libraryId)).name
+    rent.bookName = (await this.booksService.findById(rental.bookId)).title
+    result.push(rent)
+    })
+    await Promise.all(promises)
+    return result;
   }
 }

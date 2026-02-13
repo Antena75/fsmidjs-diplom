@@ -22,7 +22,7 @@ function ChatMain() {
   const listener = (socketDto: SocketDto) => {
     if (user.id !== socketDto.author.id) {
       setMessages([...messages, {
-        _id: socketDto._id,
+        id: socketDto.id,
         authorId: socketDto.author.id,
         text: socketDto.text,
         sentAt: socketDto.sentAt,

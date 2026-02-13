@@ -1,20 +1,20 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
 import { ID } from '../type.id';
 import { CreateLibraryDto } from './interfaces/create.library';
 import { SearchParamsDto } from './interfaces/search.library';
 import { UpdateLibraryDto } from './interfaces/update.library';
-import { Libraries, LibrariesDocument } from './libraries.schema';
+import { Library, LibraryEntity } from './library.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, Like, UpdateResult } from 'typeorm';
 
 @Injectable()
 export class LibrariesService {
-  constructor(@InjectModel(Libraries.name) private librariesModel: Model<Libraries>) {}
-
-  async create(dataLibrary: CreateLibraryDto): Promise<LibrariesDocument> {
+  constructor(
+    @InjectRepository(Library) private readonly libraryRepo: Repository<Library>) {}
+  async create(dataLibrary: CreateLibraryDto): Promise<LibraryEntity> {
     try {
-      const library = new this.librariesModel(dataLibrary);
-      return library.save();
+      const library = await this.libraryRepo.save(dataLibrary);
+      return new LibraryEntity(library); 
     } catch (e) {
       console.error(e);
     }
@@ -24,28 +24,34 @@ export class LibrariesService {
     libraryId: ID,
     dataLibrary: UpdateLibraryDto,
     images: string[],
-  ): Promise<LibrariesDocument> {
-    const library = await this.findById(libraryId);  // проверка наличия
-    return await this.librariesModel.findByIdAndUpdate(
-      { _id: libraryId },
-      { $set: { ...dataLibrary, images} },
-      { new: true },
+  ): Promise<UpdateResult> {
+    const library = await this.findById( libraryId );
+    return await this.libraryRepo.update(
+      { id: libraryId },
+      { ...dataLibrary,
+        images, 
+      },
     );
   }
 
-  async findById(libraryId: ID): Promise<LibrariesDocument> {
-    const library = await this.librariesModel.findById(libraryId);
+  async findById(libraryId: ID): Promise<LibraryEntity> {
+    const library = await this.libraryRepo.findOne({
+      where: { id: libraryId },
+    });
     if (!library) {
       throw new NotFoundException('Библиотека не найдена!');
     }
     return library;
   }
 
-  async search(params: SearchParamsDto): Promise<LibrariesDocument[]> {
+  async search(params: SearchParamsDto): Promise<LibraryEntity[]> {
     const { limit, offset, name } = params;
-    const query = {
-      name: { $regex: new RegExp(name, 'i') },
-    };
-    return await this.librariesModel.find(query).limit(limit || 0).skip(offset || 0)
+    return await this.libraryRepo.find({      
+      where: { 
+        name: Like (`%${name}%`),
+      },
+      skip: offset,
+      take: limit
+    });
   }
 }

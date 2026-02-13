@@ -8,13 +8,14 @@ interface RentalsList {
 }
 
 function RentalsTable(data: RentalsList) {
+  const userMail = useAppSelector(state => state.user.email);
   const { list, handleDelete } = data;
   const role = useAppSelector(state => state.user.role);
   return (
     <Container>
       {list.length > 0 ? (
         <>
-          <p className="text-muted">Пользователь: {list[0].userId.email}</p>
+          <p className="text-muted">Пользователь: {userMail}</p>
           <Table striped hover className="p-2 rounded text-center">
             <thead>
               <tr>
@@ -27,14 +28,14 @@ function RentalsTable(data: RentalsList) {
             </thead>
             <tbody>
               {list.map(elem =>
-                <tr key={elem._id}>
-                  <td>{elem.libraryId.name}</td>
-                  <td>{elem.bookId.title}</td>
+                <tr key={elem.id}>
+                  <td>{elem.libraryName}</td>
+                  <td>{elem.bookName}</td>
                   <td>{new Date(elem.dateStart).toLocaleDateString()}</td>
                   <td>{new Date(elem.dateEnd).toLocaleDateString()}</td>
                   <td>
                     {role === 'manager' &&
-                    <Button variant="danger" className="mb-1" onClick={() => handleDelete(elem._id)}>Отменить</Button>
+                    <Button variant="danger" className="mb-1" onClick={() => handleDelete(elem.id)}>Отменить</Button>
                     }
                   </td>
                 </tr>

@@ -59,7 +59,7 @@ function BooksAddForm() {
       }
 
       const formData = new FormData();
-      formData.append('library', currentLibrary._id);
+      formData.append('library', currentLibrary.id);
       formData.append('title', bookData.title);
       formData.append('author', bookData.author);
       formData.append('year', bookData.year);
@@ -75,6 +75,7 @@ function BooksAddForm() {
       
       booksAPI.addBook(formData)
         .then(result => {
+
           iziToast.success({ message: `Книга ${result.data.title} успешно добавлена`, position: 'bottomCenter' });
 
           navigate(-1);

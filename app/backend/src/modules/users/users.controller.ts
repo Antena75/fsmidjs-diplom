@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post, Query, UseGuards, SetMetadata } from '@nestjs/common';
 import { JwtGuard, RolesGuard } from '../auth.guard';
 import { SearchUsersDto } from './interfaces/search.user';
-import { Users } from './users.schema';
+import { UserEntity } from './user.entity';
 import { UsersService } from './users.service';
 import { RegisterUserDto } from './interfaces/register.user';
 import { ReturnDataDto } from '../auth/interfaces/returndata';
@@ -17,7 +17,7 @@ export class UsersController {
   @SetMetadata('roles', ['admin', 'manager']) 
   searchUsers(
     @Query() params: Partial<SearchUsersDto>,
-  ): Promise<Users[]> {
+  ): Promise<UserEntity[]> {
     return this.usersService.search(params);
   }
 

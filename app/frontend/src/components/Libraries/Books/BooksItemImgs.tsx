@@ -27,7 +27,7 @@ function BooksItemImgs({ images }: { images: string[] }) {
                 src={window.location.origin + '/libraries/' + elem}
               />
             </Figure>
-          </Carousel.Item>
+         </Carousel.Item>
         )
       )}
     </Carousel>

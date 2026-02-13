@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { EventEmitterModule } from '@nestjs/event-emitter';
-import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from './modules/auth/auth.module';
 import { BooksModule } from './modules/books/books.module';
 import { LibrariesModule } from './modules/libraries/libraries.module';
@@ -10,7 +9,12 @@ import { SupportModule } from './modules/support/support.module';
 import { UsersModule } from './modules/users/users.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import {  User } from './modules/users/user.entity';
+import { User } from './modules/users/user.entity';
+import { Library } from './modules/libraries/library.entity';
+import { Book } from './modules/books/book.entity';
+import { Rental } from './modules/rentals/rental.entity';
+import { Message } from './modules/support/entity/message.entity'
+import { Chat } from './modules/support/entity/chat.entity'
 
 @Module({
   imports: [
@@ -27,18 +31,10 @@ import {  User } from './modules/users/user.entity';
         username: config.get('POSTGRES_USER'),
         password: config.get('POSTGRES_PASSWORD'),
         database: config.get('POSTGRES_DATABASE'),
-        entities: [User],
+        entities: [User, Library, Book, Rental, Chat, Message],
         synchronize: true,
       }),
     }),
-    MongooseModule.forRoot(process.env.MONGODB_URL),
-    UsersModule,
-    AuthModule,
-    LibrariesModule,
-    BooksModule,
-    RentalsModule,
-    SupportModule,
-    SocketModule,
     EventEmitterModule.forRoot({
       wildcard: true,
       delimiter: '.',
@@ -47,7 +43,14 @@ import {  User } from './modules/users/user.entity';
       maxListeners: 200,
       verboseMemoryLeak: false,
       ignoreErrors: false,
-    })
+    }),
+    UsersModule,
+    AuthModule,
+    LibrariesModule,
+    BooksModule,
+    RentalsModule,
+    SupportModule,
+    SocketModule,
   ],
   controllers: [],
   providers: [],

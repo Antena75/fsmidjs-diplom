@@ -25,7 +25,7 @@ function SupportList() {
     }
 
     supportchatAPI.findRequests(query)
-      .then(result => {  
+      .then(result => {
         setList(result.data);
         setSpin(false);
       })

@@ -65,9 +65,9 @@ function LibrariesUpdateForm() {
         }
       }
 
-      librariesAPI.updateLibrary(formData, currentLibrary._id)
+      librariesAPI.updateLibrary(formData, currentLibrary.id)
         .then(result => {
-          iziToast.success({ message: `Библиотека ${result.data.title} успешно обновлена`, position: 'bottomCenter', });
+          iziToast.success({ message: `Библиотека ${result.data.name} успешно обновлена`, position: 'bottomCenter', });
           navigate('/all-libraries');
         })
         .catch(err => {

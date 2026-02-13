@@ -20,7 +20,7 @@ function LibrariesList() {
     librariesAPI.search({
       limit: librariesState.limit, offset: librariesState.offset, name: librariesState.nameSearch,
     })
-      .then(result => {  
+      .then(result => {
         if (result.data.length > 0) {
           dispatch(setLibrariesState({ list: result.data, spin: false }));
         } else {

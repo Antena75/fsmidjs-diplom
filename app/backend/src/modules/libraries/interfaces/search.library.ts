@@ -1,5 +1,5 @@
 export interface SearchParamsDto {
-  limit?: number;
-  offset?: number;
-  name?: string;
+  limit: number;
+  offset: number;
+  name: string;
 }

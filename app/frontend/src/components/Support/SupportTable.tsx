@@ -1,9 +1,10 @@
 import { Button, Container, Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { SupportChatDto } from "../../types/interfaces";
+// import { useAppSelector } from "../../store/hooks";
 
 function SupportTable(data: SupportChatDto) {   //если не использовать any
-
+// const userState = useAppSelector(state => state.user);
   return (
     <Container>
       {data.list && data.list.length > 0 ? (
@@ -20,13 +21,14 @@ function SupportTable(data: SupportChatDto) {   //если не использо
             </thead>
             <tbody>
               {data.list.map(elem =>
-                <tr key={elem._id}>
-                  <td>{elem.userId.name}</td>
-                  <td>{elem.userId.email}</td>
-                  <td>{elem.userId.contactPhone}</td>
+
+                <tr key={elem.id}>
+                  <td>{elem.user.name}</td>
+                  <td>{elem.user.email}</td>
+                  <td>{elem.user.contactPhone}</td>
                   <td>{new Date(elem.createdAt).toLocaleDateString()}</td>
                   <td>
-                    <Link to={`/chat?id=${elem._id}&email=${elem.userId.email}`} className="text-decoration-none">
+                    <Link to={`/chat?id=${elem.id}&email=${elem.user.email}`} className="text-decoration-none">
                       <Button variant="warning" className="mb-1">Перейти</Button>
                     </Link>
                   </td>

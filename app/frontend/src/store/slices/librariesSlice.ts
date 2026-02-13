@@ -17,7 +17,7 @@ const initialState: LibrariesState = {
   spin: false,
   list: [],
   currentLibrary: {
-    _id: '',
+    id: '',
     name: '',
     address: '',
     description: '',

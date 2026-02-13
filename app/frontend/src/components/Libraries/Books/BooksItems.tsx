@@ -34,7 +34,7 @@ function BooksItems(data: BooksList) {
       ) : (
         <>
           {list.map(elem =>
-            <BooksItem key={elem._id} book={elem} />
+            <BooksItem key={elem.id} book={elem} />
           )}
           <Pagination className="mt-3">
             {booksState.offset > 0 && 

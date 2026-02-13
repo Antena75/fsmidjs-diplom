@@ -7,7 +7,7 @@ export class CreateUserDto {
 
   @IsNotEmpty({ message: 'Пароль является обязательным полем' })
   @IsString()
-  readonly passwordHash: string;
+  readonly hash: string;
 
   @IsNotEmpty({ message: 'Имя является обязательным полем' })
   @IsString()

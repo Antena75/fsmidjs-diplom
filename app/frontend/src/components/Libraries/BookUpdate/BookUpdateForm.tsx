@@ -71,7 +71,7 @@ function BookUpdateForm() {
       formData.append('totalCopies', totalCopies);
       formData.append('availableCopies', availableCopies);
 
-      booksAPI.updateBook(formData, currentBook._id)
+      booksAPI.updateBook(formData, currentBook.id)
         .then(result => {
           iziToast.success({ message: `Книга ${result.data.title} успешно обновлена`, position: 'bottomCenter' });
           navigate(-1);

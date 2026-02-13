@@ -1,5 +1,5 @@
 export interface UserData {
-  _id: string;
+  id: string;
   name: string;
   email: string;
   role: string,
@@ -7,7 +7,7 @@ export interface UserData {
 }
 
 export interface LibraryData {
-  _id: string;
+  id: string;
   name: string;
   address: string;
   description: string;
@@ -15,16 +15,16 @@ export interface LibraryData {
 }
 
 export interface BookData {
-  _id: string,
+  id: string,
   library: string;
   title: string;
   author: string;
-  year: string;
+  year: number;
   description: string;
   images: string[];
   isAvailable: boolean;
-  totalCopies: string;
-  availableCopies: string;
+  totalCopies: number;
+  availableCopies: number;
 }
 
 export interface RegData {
@@ -71,12 +71,14 @@ export interface SearchRentalsDto {
 }
 
 export interface RentalData {
-  _id: string;
-  userId: { _id: string, email: string };
-  libraryId: { _id: string, name: string };
-  bookId: { _id: string, title: string };
+  id: string;
+  userId: { id: string, email: string };
+  libraryId: string;
+  bookId: string;
   dateStart: string,
   dateEnd: string,
+  libraryName: string,
+  bookName: string
 }
 
 export interface CreateSupportChatDto {
@@ -102,11 +104,12 @@ export interface MarkMessagesAsReadDto {
 }
 
 export interface SupportChatData {
-  _id: string;
-  userId: UserData;
+  id: string;
+  userId: string;
   messages: MessageData;
   isActive: boolean;
   createdAt: Date;
+  user: UserData;
 }
 
 export interface SupportChatDto {
@@ -114,7 +117,7 @@ export interface SupportChatDto {
 }
 
 export interface MessageData {
-  _id: string;
+  id: string;
   authorId: string;
   text: string;
   sentAt: Date;
@@ -122,7 +125,7 @@ export interface MessageData {
 }
 
 export interface SocketDto {
-  _id: string;
+  id: string;
   text: string;
   sentAt: string;
   author: {

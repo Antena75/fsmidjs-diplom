@@ -7,7 +7,8 @@ import { CreateLibraryDto } from './interfaces/create.library';
 import { SearchParamsDto } from './interfaces/search.library';
 import { UpdateLibraryDto } from './interfaces/update.library';
 import { LibrariesService } from './libraries.service';
-import { LibrariesDocument } from './libraries.schema';
+import { LibraryEntity } from './library.entity';
+import { UpdateResult } from 'typeorm';
 
 @Controller('api/libraries')
 export class LibrariesController {
@@ -16,11 +17,11 @@ export class LibrariesController {
   @Post()
   @UseGuards(JwtGuard, RolesGuard)
   @SetMetadata('roles', ['admin']) 
-  @UseInterceptors(UploadFiles())
+  @UseInterceptors(UploadFiles()) 
   createLibrary(
     @UploadedFiles() images: Array<Express.Multer.File>,
     @Body() dataLibrary: CreateLibraryDto,
-  ): Promise<LibrariesDocument> {
+  ): Promise<LibraryEntity> {
     const data = { ...dataLibrary };
     if (images?.length) { data.images = images.map((img) => img.filename); }
     return this.librariesService.create(data);
@@ -34,17 +35,17 @@ export class LibrariesController {
     @Param('id') libraryId: ID,
     @Body() dataLibrary: UpdateLibraryDto,
     @UploadedFiles() images: Array<Express.Multer.File>,
-  ): Promise<LibrariesDocument> {
+  ): Promise<UpdateResult> {
     return this.librariesService.update( libraryId, dataLibrary, images.map((img) => img.filename) );
   }
 
   @Get()
-  searchLibraries(@Query() params: SearchParamsDto): Promise<LibrariesDocument[]> {
+  searchLibraries(@Query() params: SearchParamsDto): Promise<LibraryEntity[]>{
     return this.librariesService.search(params);
   }
 
   @Get('/findlibrary/:id')
-  findById(@Param('id') libraryId: ID): Promise<LibrariesDocument> {
+  findById(@Param('id') libraryId: ID): Promise<LibraryEntity> {
     return this.librariesService.findById(libraryId);
   }
 }

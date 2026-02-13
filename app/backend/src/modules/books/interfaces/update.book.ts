@@ -1,30 +1,31 @@
-import { IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString,  MaxLength, MinLength } from 'class-validator';
 
 export class UpdateBookDto {
-  @IsOptional()
+  @IsNotEmpty({message: 'Название книги - обязательное поле',})
+  @MinLength(5, { message: 'Название книги- не менее 5 символов!' })
+  @MaxLength(100, {message: 'Название книги - не более 50 символов!'})
   @IsString()
-  readonly title?: string;
+  readonly title: string;
 
-  @IsOptional()
+  @IsNotEmpty({message: 'Автор книги - обязательное поле',})
+  @MinLength(5, { message: 'Название книги - не менее 5 символов!' })
+  @MaxLength(100, {message: 'Название книги - не более 50 символов!'})
   @IsString()
-  readonly author?: string;
+  readonly author: string;
   
   @IsOptional()
-  @IsString()
-  readonly year?: string;
+  readonly year?: number;
 
   @IsOptional()
   @IsString()
   readonly description?: string;
 
   @IsOptional()
-  readonly images?: Express.Multer.File[] | string[];
+  readonly images?: string[];
 
   @IsOptional()
-  @IsString()
-  readonly totalCopies?: string;
+  readonly totalCopies?: number;
 
   @IsOptional()
-  @IsString()
-  readonly availableCopies?: string;
+  readonly availableCopies?: number;
 }

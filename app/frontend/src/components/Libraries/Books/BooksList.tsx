@@ -23,7 +23,7 @@ function BooksList() {
       offset: booksState.offset,
       title: booksState.titleSearch,
       author: booksState.authorSearch,
-      library: currentLibrary._id,
+      library: currentLibrary.id,
       isAvailable: true
     })
       .then(result => { 

@@ -3,7 +3,8 @@ import { JwtGuard, RolesGuard } from 'src/modules/auth.guard';
 import { ID } from '../type.id';
 import { RentalDto } from './interfaces/Rental';
 import { RentalsService } from './rentals.service';
-import { RentalsDocument } from './rentals.schema';
+import { DeleteResult } from 'typeorm';
+import { RentalEntity } from './rental.entity';
 
 @UseGuards(JwtGuard, RolesGuard)
 @Controller('api/rentals')
@@ -14,7 +15,7 @@ export class RentalsController {
   @SetMetadata('roles', ['client']) 
   createRental(
     @Body() rentalDto: RentalDto,
-  ): Promise<RentalsDocument> {
+  ): Promise<RentalEntity> {
     return this.rentalsService.createRental(rentalDto);
   }
 
@@ -22,7 +23,7 @@ export class RentalsController {
   @SetMetadata('roles', ['manager'])
   removeRental(
     @Param('id') rentalId: ID,
-  ): Promise<RentalsDocument> {
+  ): Promise<DeleteResult> {
     return this.rentalsService.removeRental(
       rentalId
     );
@@ -31,7 +32,7 @@ export class RentalsController {
   @Get()
   searchRentals(
     @Query() searchParams: Partial<RentalDto>,
-  ): Promise<RentalsDocument[]> {
+  ): Promise<RentalEntity[]> {
     return this.rentalsService.searchRentals(searchParams);
   }
 }

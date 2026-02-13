@@ -1,63 +1,46 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
 import { ID } from '../../type.id';
 import { UsersService } from '../../users/users.service';
 import { CreateRequestDto } from '../interfaces/create.request';
-import { MarkMessagesAsReadDto } from '../interfaces/mark.message';
-import { Message, MessageDocument } from '../schemas/message.schema';
-import { Chat } from '../schemas/chat.schema';
+import { Message } from '../entity/message.entity';
+import { Chat, ChatEntity } from '../entity/chat.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, In} from 'typeorm';
 
 @Injectable()
 export class SupportClientService {
   constructor(
-    @InjectModel(Chat.name) private chatModel: Model<Chat>,
-    @InjectModel(Message.name) private messageModel: Model<Message>,
+    @InjectRepository(Chat) private readonly chatRepo: Repository<Chat>,
+    @InjectRepository(Message) private readonly messageRepo: Repository<Message>,
     private usersService: UsersService,
   ) {}
   async createChat(
     dataReq: CreateRequestDto,
-  ): Promise<Chat> {
+  ): Promise<ChatEntity> {
     const user = await this.usersService.findById(dataReq.userId);
     if (!user) {
       throw new NotFoundException('Пользователь не найден!');
     }
-
     try {
-      const createdChat = new this.chatModel({
+      const chat = await this.chatRepo.save({
         userId: dataReq.userId,
       });
-      return createdChat.save();
+      return new ChatEntity(chat);
     } catch (error) {
       console.error(error);
     }
   }
 
-  async getUnreadCount(chatId: ID): Promise<number> {
-    const chat = await this.chatModel.findById(chatId)
-    const count = await this.messageModel.countDocuments(
-      {
-        _id: { $in: chat.messages },
-        // authorId: { $ne: chat.userId },
-          readAtAt: null,
-      },
-    );
-    return count;
+  async getUnreadCount(chatId: ID): Promise<number>{
+    const chat = await this.chatRepo.findOne({ where: { id: chatId } });
+    const count = await this.messageRepo.find({ 
+      where:{
+        id: In (chat.messages),
+        // authorId: Not (chat.userId),
+        readAt: null,
+      }
+    });
+    return count.length;
   }
-  
-  // async markMessagesAsRead(dataMark: MarkMessagesAsReadDto): Promise<void>  {    // на всякий случай
-  //   const chat = await this.chatModel.findById(dataMark.chatId)
-  //   if (!chat) {
-  //     throw new NotFoundException('Обращение не найдено!');
-  //   }
-  //   await this.messageModel.updateMany(
-  //     {
-  //       _id: { $in: chat.messages },
-  //       authorId: { $ne: dataMark.userId },
-  //       sentAt: { $lte: dataMark.createdBefore },
-  //     },
-  //     { $set: { readAt: new Date() } },
-  //   );
-  // }
 }
 

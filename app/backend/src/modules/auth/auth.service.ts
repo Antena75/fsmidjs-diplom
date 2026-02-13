@@ -23,7 +23,7 @@ export class AuthService {
 
     const isPasswordMatched = await bcrypt.compare(
       password,
-      user.passwordHash,
+      user.hash,
     );
 
     if (!isPasswordMatched) {
@@ -31,7 +31,7 @@ export class AuthService {
     }
 
     const payload: IJwtPayload = {
-      id: user.id.toString(),
+      id: user.id,
       email: user.email,
       name: user.name,
       contactPhone: user.contactPhone,

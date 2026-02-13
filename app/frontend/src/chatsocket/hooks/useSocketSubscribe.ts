@@ -22,7 +22,7 @@ export const useSocketSubscribe = () => {
     supportchatAPI.findRequests(query)
       .then(result => {  
         const { data } = result;
-        data && data.forEach((el: any) => { socket.emit('subscribeToChat', { chatId: el._id }) });
+        data && data.forEach((el: any) => { socket.emit('subscribeToChat', { chatId: el.id }) });
       })
       .catch(err => {
         console.error(err);

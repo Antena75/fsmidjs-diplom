@@ -17,7 +17,7 @@ function LibrariesListItem({ library, showBtn }: { library: LibraryData, showBtn
             <p className="text-muted">{library.description}</p>
             
             {showBtn === true &&
-              <Link to={`/library?id=${library._id}`} className="text-decoration-none">
+              <Link to={`/library?id=${library.id}`} className="text-decoration-none">
                 <Button className="mb-2">Подробрее...</Button>
               </Link>
             }

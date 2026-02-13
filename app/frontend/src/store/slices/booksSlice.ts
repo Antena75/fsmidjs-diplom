@@ -19,16 +19,16 @@ const initialState: BooksState = {
   spin: false,
   list: [],
   currentBook: {
-    _id: '',
+    id: '',
     library: '',
     title: '',
     author: '',
-    year: '',
+    year: 0,
     description: '',
     images: [],
     isAvailable: true,
-    totalCopies: '',
-    availableCopies: '',
+    totalCopies: 1,
+    availableCopies: 1,
   },
 }
 
