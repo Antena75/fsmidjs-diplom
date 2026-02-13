@@ -7,11 +7,11 @@ function LibrariesSearchForm() {
   const [name, setName] = useState<string>('');
   const dispatch = useAppDispatch();
 
-  const searchHandler = async (e: React.FormEvent<HTMLFormElement>) => {
+  const searchHandler = async (e: React.SubmitEvent<HTMLFormElement>) => {
     try {
       e.preventDefault();
-
       dispatch(setLibrariesState({ offset: 0, nameSearch: name }));
+      
     } catch (error) {
       console.error(error);
     }

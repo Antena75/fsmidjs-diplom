@@ -28,7 +28,6 @@
     "socket.io-client": "^4.8.3"
   },
   "devDependencies": {
-    "@rollup/rollup-linux-x64-gnu": "^4.57.1",
     "@types/node": "^25.0.3",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",

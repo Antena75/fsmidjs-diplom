@@ -14,39 +14,34 @@ services:
     networks:
       - post
 
-  # pgadmin:
-  #   container_name: pgadmin
-  #   image: dpage/pgadmin4:7.2
-  #   environment:
-  #     PGADMIN_DEFAULT_EMAIL: "pguser@mail.ru"
-  #     PGADMIN_DEFAULT_PASSWORD: "pgadmin"
-  #     PGADMIN_CONFIG_SERVER_MODE: "False"
-  #   volumes:
-  #     - pgadmin-data:/var/lib/pgadmin
-  #   ports:
-  #     - "5050:80"
-  #   restart: unless-stopped
-  #   networks:
-  #     - post
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4:7.2
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "pguser@mail.ru"
+      PGADMIN_DEFAULT_PASSWORD: "pgadmin"
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    ports:
+      - "5050:80"
+    restart: unless-stopped
+    networks:
+      - post
 
   backend:
     image: node:22.20
     working_dir: /app
     volumes:
       - ./backend:/app
-    # environment:
-    #   DATA_SOURCE_URI: 'localhost:5432/postgres?sslmode=disable'
-    #   DATA_SOURCE_USER=postgres
-    #   DATA_SOURCE_PASS=postgres
-    #   - HTTP_PORT=3000
-    #   - POSTGRES_HOST=localhost
-    #   - POSTGRES_PORT=5432
-    #   - POSTGRES_USER=postgres
-    #   - POSTGRES_PASSWORD=postgres
-    #   - POSTGRES_DATABASE=postgres
-    #   - DATA_SOURCE_URI=localhost:5432/postgres?sslmode=disable
-    #   - JWT_SECRET=SECRET
-
+    environment:
+      - HTTP_PORT=3000
+      - POSTGRES_HOST=test-db
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DATABASE=postgres
+      - JWT_SECRET=SECRET
     ports:
       - 3000:3000
     command: npm run start:dev
@@ -55,21 +50,21 @@ services:
     networks:
       - post
 
-  # frontend:
-  #   image: node:22.20
-  #   working_dir: /app
-  #   volumes:
-  #     - ./frontend:/app
-  #   environment: 
-  #     - VITE_MAIN_URL=http://localhost:3000/api
-  #     - VITE_SERVER_URL=http://localhost:3000
-  #   ports:
-  #     - 5173:5173
-  #   command: npm run dev
-  #   depends_on:
-  #     - backend
-  #   networks:
-  #     - post
+  frontend:
+    image: node:22.20
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+    environment: 
+      - VITE_MAIN_URL=http://localhost:3000/api
+      - VITE_SERVER_URL=http://localhost:3000
+    ports:
+      - 5173:5173
+    command: npm run dev
+    depends_on:
+      - backend
+    networks:
+      - post
 
 networks:
   post:

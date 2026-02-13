@@ -50,6 +50,7 @@ export class SupportService {
     if (chat.userId !== authorId && user.role !== 'manager' ) {
       throw new ForbiddenException('Нет доступа к обращению!');
     }
+    
     try {
       const message = await this.messageRepo.save({
         authorId,
@@ -90,12 +91,7 @@ export class SupportService {
     if ( chat.userId !== userId && user.role !== 'manager' ) {
       throw new ForbiddenException('Нет доступа к сообщениям!');
     }
-    // if ( chat.userId.toString() !==
-    //     new mongoose.Types.ObjectId(userId.toString()).toString() && user.role !== 'manager' ) {
-    //   throw new ForbiddenException(
-    //     'Нет доступа к сообщениям!',
-    //   );
-    // }
+
     const messages = []
     const promises = chat.messages.map(async (message) => {
     const msg = (await this.findById(message))

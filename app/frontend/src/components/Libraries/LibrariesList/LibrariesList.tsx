@@ -24,7 +24,7 @@ function LibrariesList() {
         if (result.data.length > 0) {
           dispatch(setLibrariesState({ list: result.data, spin: false }));
         } else {
-          dispatch(setLibrariesState({ offset: 0, spin: false }));
+          dispatch(setLibrariesState({ list: result.data, offset: 0, spin: false }));
         }
       })
       .catch(err => {

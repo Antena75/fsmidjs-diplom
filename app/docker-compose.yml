@@ -40,12 +40,11 @@ services:
     #   - ./backend:/app
     environment: 
       - HTTP_PORT=3000
-      - POSTGRES_HOST=localhost
+      - POSTGRES_HOST=test-db
       - POSTGRES_PORT=5432
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DATABASE=postgres
-
       - JWT_SECRET=SECRET
     depends_on:
       - test-db
@@ -58,8 +57,6 @@ services:
       dockerfile: ./Dockerfile.front
     ports: 
       - 5173:5173
-    # volumes:
-    #   - ./frontend:/app
     environment: 
       - VITE_MAIN_URL=http://localhost:3000/api
       - VITE_SERVER_URL=http://localhost:3000
