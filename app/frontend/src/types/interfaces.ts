@@ -59,7 +59,7 @@ export interface SearchUsersDto {
 }
 
 export interface AddRentalDto {
-  userId: string | null;
+  // userId: string | null;
   libraryId: string;
   bookId: string;
   dateStart: string;

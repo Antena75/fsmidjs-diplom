@@ -26,7 +26,7 @@ function RentalsForm() {
       }
 
       const data = {
-        userId,
+        // userId,
         libraryId: currentLibrary.id,
         bookId: currentBook.id,
         dateStart,

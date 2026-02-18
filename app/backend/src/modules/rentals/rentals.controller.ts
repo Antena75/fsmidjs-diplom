@@ -5,6 +5,8 @@ import { RentalDto } from './interfaces/Rental';
 import { RentalsService } from './rentals.service';
 import { DeleteResult } from 'typeorm';
 import { RentalEntity } from './rental.entity';
+import { SerializeUser } from './decorators/serialize';
+import { UserEntity } from '../users/user.entity';
 
 @UseGuards(JwtGuard, RolesGuard)
 @Controller('api/rentals')
@@ -15,8 +17,9 @@ export class RentalsController {
   @SetMetadata('roles', ['client']) 
   createRental(
     @Body() rentalDto: RentalDto,
+    @SerializeUser() cUser: UserEntity
   ): Promise<RentalEntity> {
-    return this.rentalsService.createRental(rentalDto);
+    return this.rentalsService.createRental(rentalDto, cUser);
   }
 
   @Delete(':id')

@@ -7,6 +7,7 @@ import { RentalDto } from './interfaces/Rental';
 import { Rental, RentalEntity } from './rental.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DeleteResult, MoreThan, LessThan } from 'typeorm';
+import { UserEntity } from '../users/user.entity';
 
 @Injectable()
 export class RentalsService {
@@ -17,8 +18,8 @@ export class RentalsService {
     private booksService: BooksService,
   ) {}
  
-  async createRental(dataRental: RentalDto): Promise<RentalEntity> {
-    const user = await this.usersService.findById(dataRental.userId);
+  async createRental(dataRental: RentalDto, cUser: UserEntity): Promise<RentalEntity> {
+    const user = await this.usersService.findById(cUser.id);
     if (!user) {
       throw new NotFoundException('Пользователь не найден!');
     }
@@ -43,6 +44,7 @@ export class RentalsService {
       throw new BadRequestException('Книга не доступна (арендована)');
     }
     try {
+      dataRental.userId = cUser.id;
       const rental = await this.rentalRepo.save(dataRental);
       return new RentalEntity(rental); 
     } catch (e) {
